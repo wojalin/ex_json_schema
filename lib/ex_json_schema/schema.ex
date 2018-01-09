@@ -151,7 +151,7 @@ defmodule ExJsonSchema.Schema do
   end
 
   defp fetch_and_resolve_remote_schema(root, url) do
-    resolve_remote_schema(root, url, fetch_remote_schema(url))
+    resolve_remote_schema(root, url, fetch_remote_schema(root, url))
   end
 
   defp resolve_remote_schema(root, url, remote_schema) do
@@ -165,9 +165,10 @@ defmodule ExJsonSchema.Schema do
     %{root | refs: Map.put(root.refs, url, ref)}
   end
 
-  defp fetch_remote_schema(url) do
+  defp fetch_remote_schema(root, url) do
     case remote_schema_resolver() do
-      fun when is_function(fun) -> fun.(url)
+      fun when is_function(fun, 1) -> fun.(url)
+      fun when is_function(fun, 2) -> fun.(root, url)
       {mod, fun_name} -> apply(mod, fun_name, [url])
     end
   end
