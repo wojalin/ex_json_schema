@@ -167,9 +167,7 @@ defmodule ExJsonSchema.Schema do
 
   defp fetch_remote_schema(root, url) do
     case remote_schema_resolver() do
-      fun when is_function(fun, 1) -> fun.(url)
-      fun when is_function(fun, 2) -> fun.(root, url)
-      {mod, fun_name} -> apply(mod, fun_name, [url])
+      {mod, fun_name} -> apply(mod, fun_name, [root, url])
     end
   end
 
